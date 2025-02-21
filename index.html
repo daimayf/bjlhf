@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>班级量化分管理系统</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: '微软雅黑', Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        /* 搜索框样式 */
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #4CAF50;
+        }
+
+        /* 输入组样式 */
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #4CAF50;
+        }
+
+        .input-group button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .input-group button:hover {
+            background-color: #45a049;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        th:hover {
+            background-color: #45a049;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* 操作按钮样式 */
+        .delete-btn {
+            background-color: #ff4444;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+
+        .edit-btn {
+            background-color: #ff9900;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn:hover {
+            background-color: #cc7a00;
+        }
+
+        /* 可编辑单元格样式 */
+        .editable {
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .editable:hover {
+            background-color: #e3f2fd;
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.3);
+        }
+
+        /* 导出和导入按钮样式 */
+        .excel-box {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .excel-box button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .excel-box button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 修改密码按钮样式 */
+        .password-box {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .password-box button {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .password-box button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>班级量化分管理系统</h1>
+        
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="输入学号或姓名搜索...">
+        </div>
+
+        <!-- 输入组 -->
+        <div class="input-group">
+            <input type="text" id="studentId" placeholder="学号">
+            <input type="text" id="studentName" placeholder="姓名">
+            <input type="number" id="studentScore" placeholder="量化分">
+            <button onclick="addStudent()">添加学生</button>
+        </div>
+
+        <!-- 表格 -->
+        <table id="scoreTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('id')">学号 ↑↓</th>
+                    <th onclick="sortTable('name')">姓名 ↑↓</th>
+                    <th onclick="sortTable('score')">量化分 ↑↓</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+
+        <!-- 导出和导入按钮 -->
+        <div class="excel-box">
+            <button onclick="exportToExcel()">导出为Excel</button>
+            <button onclick="importExcel()">从Excel导入</button>
+            <input type="file" id="excelFile" style="display:none;" accept=".xlsx, .xls">
+        </div>
+
+        <!-- 修改密码按钮 -->
+        <div class="password-box">
+            <button onclick="changePassword()">修改密码</button>
+        </div>
+    </div>
+
+    <!-- 引入 xlsx 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <script>
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+        let sortState = { field: 'id', asc: true }; // 默认按学号排序
+        let PASSWORD = localStorage.getItem('quantifyPassword') || "314159"; // 默认密码
+        
+        // 初始化表格
+        function initTable() {
+            // 默认按学号从小到大排序
+            students.sort((a, b) => a.id - b.id);
+            renderTable(students);
+        }
+
+        // 添加学生
+        function addStudent() {
+            const id = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const score = document.getElementById('studentScore').value;
+
+            if (!id || !name || !score) {
+                alert('请填写完整信息');
+                return;
+            }
+
+            if (students.some(student => student.id === id)) {
+                alert('该学号已存在');
+                return;
+            }
+
+            students.push({ id, name, score: Number(score) });
+            saveData();
+            sortTable(sortState.field); // 添加后重新排序
+            renderTable(students);
+            clearInputs();
+        }
+
+        // 删除学生（需要密码）
+        function deleteStudent(id) {
+            const password = prompt('请输入密码以删除学生信息：');
+            if (password !== PASSWORD) {
+                alert('密码错误，无法删除！');
+                return;
+            }
+
+            students = students.filter(student => student.id !== id);
+            saveData();
+            renderTable(students);
+        }
+
+        // 修改量化分（需要密码）
+        function editScore(id) {
+            const password = prompt('请输入密码以修改量化分：');
+            if (password !== PASSWORD) {
+                alert('密码错误，无法修改！');
+                return;
+            }
+
+            const newScore = prompt('请输入新的量化分：');
+            if (newScore !== null && !isNaN(newScore)) {
+                students = students.map(student => 
+                    student.id === id ? { ...student, score: Number(newScore) } : student
+                );
+                saveData();
+                renderTable(students);
+            }
+        }
+
+        // 修改学号
+        function editStudentInfo(id, field) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            const newValue = prompt(`请输入新的学号：`, student[field]);
+            if (!newValue) return;
+
+            if (students.some(s => s.id === newValue && s.id !== id)) {
+                alert('该学号已存在！');
+                return;
+            }
+            if (!/^\d+$/.test(newValue)) {
+                alert('学号必须为数字！');
+                return;
+            }
+
+            students = students.map(s => 
+                s.id === id ? { ...s, [field]: newValue } : s
+            );
+            
+            saveData();
+            renderTable(students);
+        }
+
+        // 修改密码
+        function changePassword() {
+            const oldPassword = prompt('请输入旧密码：');
+            if (oldPassword !== PASSWORD) {
+                alert('旧密码错误，无法修改！');
+                return;
+            }
+
+            const newPassword = prompt('请输入新密码：');
+            if (newPassword) {
+                PASSWORD = newPassword;
+                localStorage.setItem('quantifyPassword', newPassword);
+                alert('密码修改成功！');
+            }
+        }
+
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase();
+            const filtered = students.filter(student => 
+                student.id.includes(keyword) || student.name.toLowerCase().includes(keyword)
+            );
+            renderTable(filtered);
+        });
+
+        // 排序功能
+        function sortTable(field) {
+            sortState.asc = (field === sortState.field) ? !sortState.asc : true;
+            sortState.field = field;
+
+            students.sort((a, b) => {
+                if (field === 'id') {
+                    return sortState.asc ? a.id - b.id : b.id - a.id; // 学号按数字排序
+                } else if (field === 'name') {
+                    const nameA = a.name.charAt(0).toLowerCase(); // 取姓氏首字母
+                    const nameB = b.name.charAt(0).toLowerCase();
+                    return sortState.asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA); // 按首字母排序
+                } else if (field === 'score') {
+                    return sortState.asc ? a.score - b.score : b.score - a.score; // 量化分按数字排序
+                }
+                return 0;
+            });
+
+            renderTable(students);
+        }
+
+        // 渲染表格
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = data.map(student => `
+                <tr>
+                    <td>
+                        <span class="editable" onclick="editStudentInfo('${student.id}', 'id')">
+                            ${student.id}
+                        </span>
+                    </td>
+                    <td>${student.name}</td>
+                    <td>${student.score}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editScore('${student.id}')">改分</button>
+                        <button class="delete-btn" onclick="deleteStudent('${student.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 清空输入框
+        function clearInputs() {
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentScore').value = '';
+        }
+
+        // 保存数据到本地存储
+        function saveData() {
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+
+        // 导出数据为 Excel
+        function exportToExcel() {
+            const ws = XLSX.utils.json_to_sheet(students);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+            XLSX.writeFile(wb, `量化分_${new Date().toLocaleDateString()}.xlsx`);
+        }
+
+        // 从 Excel 导入数据
+        function importExcel() {
+            document.getElementById('excelFile').click();
+            document.getElementById('excelFile').onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet);
+
+                    // 检查导入的数据格式
+                    if (json.length > 0 && json[0].学号 && json[0].姓名 && json[0].量化分) {
+                        students = json.map(row => ({
+                            id: row.学号.toString(),
+                            name: row.姓名,
+                            score: Number(row.量化分)
+                        }));
+                        saveData();
+                        sortTable(sortState.field); // 导入后重新排序
+                        renderTable(students);
+                        alert('数据导入成功！');
+                    } else {
+                        alert('Excel 文件格式不正确，请确保包含“学号”、“姓名”、“量化分”三列！');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            };
+        }
+
+        // 初始化
+        initTable();
+    </script>
+</body>
+</html>
