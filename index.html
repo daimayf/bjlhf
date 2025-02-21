@@ -151,19 +151,6 @@
             background-color: #cc7a00;
         }
 
-        /* 可编辑单元格样式 */
-        .editable {
-            cursor: pointer;
-            padding: 2px 5px;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-
-        .editable:hover {
-            background-color: #e3f2fd;
-            box-shadow: 0 0 3px rgba(0, 123, 255, 0.3);
-        }
-
         /* 导出和导入按钮样式 */
         .excel-box {
             margin-top: 20px;
@@ -406,7 +393,7 @@
                     <td>${student.name}</td>
                     <td>${student.score}</td>
                     <td>
-                        <button class="edit-btn" onclick="editScore('${student.id}')">改分</button>
+                        <button class="edit-btn" onclick="editScore('${student.id}')">修改</button>
                         <button class="delete-btn" onclick="deleteStudent('${student.id}')">删除</button>
                     </td>
                 </tr>
