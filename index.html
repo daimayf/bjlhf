@@ -309,31 +309,6 @@
             }
         }
 
-        // 修改学号
-        function editStudentInfo(id, field) {
-            const student = students.find(s => s.id === id);
-            if (!student) return;
-
-            const newValue = prompt(`请输入新的学号：`, student[field]);
-            if (!newValue) return;
-
-            if (students.some(s => s.id === newValue && s.id !== id)) {
-                alert('该学号已存在！');
-                return;
-            }
-            if (!/^\d+$/.test(newValue)) {
-                alert('学号必须为数字！');
-                return;
-            }
-
-            students = students.map(s => 
-                s.id === id ? { ...s, [field]: newValue } : s
-            );
-            
-            saveData();
-            renderTable(students);
-        }
-
         // 修改密码
         function changePassword() {
             const oldPassword = prompt('请输入旧密码：');
